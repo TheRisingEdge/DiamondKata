@@ -26,6 +26,12 @@ public class DiamondTests
         "C   C\n" +
         " B B \n" +
         "  A  \n")]
+    [InlineData('c', 
+        "  a  \n" +
+        " b b \n" +
+        "c   c\n" +
+        " b b \n" +
+        "  a  \n")]
     public void PrintsExpectedDiamondForInputCharacter(char inputCharacter, string expectedDiamond)
     {
         var diamond = new Diamond(inputCharacter);
