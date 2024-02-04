@@ -6,6 +6,8 @@ public class Diamond
 {
     private readonly char _inputCharacter;
     private readonly char _startOfTheAlphabetCharacter;
+    
+    private readonly record struct CharacterPositionsOnLine(char Character, int FirstIndex, int SecondIndex);
 
     public Diamond(char inputCharacter)
     {
@@ -15,39 +17,44 @@ public class Diamond
 
     public override string ToString()
     {
-        var topHalfCharacters = CharacterRange(_startOfTheAlphabetCharacter, _inputCharacter);
-        var bottomHalfCharacters = CharacterRange(_startOfTheAlphabetCharacter, _inputCharacter).Reverse().Skip(1);
-        var topToBottomCharacters = topHalfCharacters.Concat(bottomHalfCharacters);
+        var topToBottomCharacters = GetTopToBottomCharacters(_inputCharacter).ToArray();
 
-        var (_, columns, midRowIndex) = MeasureDiamondSizeFor(_inputCharacter);
+        var lineSize = topToBottomCharacters.Length;
 
         var diamondLines = topToBottomCharacters
-            .Select(c => PlaceCharacterOnLine(c, columns, midRowIndex));
+            .Select(character => ComputeCharacterPositionsOnLine(character, lineSize))
+            .Select(characterPositions => CreateLineWithCharacter(characterPositions, lineSize))
+            .ToArray();
 
         return Stringify(diamondLines);
     }
-
-    private (int rows, int columns, int midRowIndex) MeasureDiamondSizeFor(char inputCharacter)
+    
+    private IEnumerable<char> GetTopToBottomCharacters(char inputCharacter)
     {
-        var columns = (inputCharacter - _startOfTheAlphabetCharacter) * 2 + 1;
+        var topHalfCharacters = CharacterRange(_startOfTheAlphabetCharacter, inputCharacter);
+        var bottomHalfCharacters = CharacterRange(_startOfTheAlphabetCharacter, inputCharacter).Reverse().Skip(1);
         
-        return (columns, columns, columns / 2);
+        return topHalfCharacters.Concat(bottomHalfCharacters);
     }
 
-    private char[] PlaceCharacterOnLine(char character, int lineSize, int lineMidIndex)
+    private CharacterPositionsOnLine ComputeCharacterPositionsOnLine(char character, int lineSize)
     {
-        var characterMidOffset = _startOfTheAlphabetCharacter - character;
-        var firstAppearanceIndex = lineMidIndex + characterMidOffset;
-        var secondAppearanceIndex = lineMidIndex - characterMidOffset;
+        var lineMiddle = lineSize / 2;
+        var offsetFromMiddle = _startOfTheAlphabetCharacter - character;
 
-        var line = EmptyLine(lineSize);
-        line[firstAppearanceIndex] = character;
-        line[secondAppearanceIndex] = character;
+        return new CharacterPositionsOnLine(character, lineMiddle - offsetFromMiddle, lineMiddle + offsetFromMiddle);
+    }
+
+    private char[] CreateLineWithCharacter(CharacterPositionsOnLine characterPositions, int lineSize)
+    {
+        var line = CreateEmptyLine(lineSize);
+        line[characterPositions.FirstIndex] = characterPositions.Character;
+        line[characterPositions.SecondIndex] = characterPositions.Character;
 
         return line;
     }
     
-    private static char[] EmptyLine(int size) 
+    private static char[] CreateEmptyLine(int size) 
     {
         var line = new char[size];
         
