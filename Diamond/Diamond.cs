@@ -7,7 +7,7 @@ public class Diamond
     private readonly char _inputCharacter;
     private readonly char _startOfTheAlphabetCharacter;
     
-    private readonly record struct CharacterPositionsOnLine(char Character, int FirstIndex, int SecondIndex);
+    private readonly record struct CharacterLinePositions(char Character, int FirstIndex, int SecondIndex);
 
     public Diamond(char inputCharacter)
     {
@@ -17,19 +17,18 @@ public class Diamond
 
     public override string ToString()
     {
-        var topToBottomCharacters = GetTopToBottomCharacters(_inputCharacter).ToArray();
+        var topToBottomCharacters = GetTopToBottomCharactersFor(_inputCharacter).ToArray();
 
         var lineSize = topToBottomCharacters.Length;
 
         var diamondLines = topToBottomCharacters
-            .Select(character => ComputeCharacterPositionsOnLine(character, lineSize))
-            .Select(characterPositions => CreateLineWithCharacter(characterPositions, lineSize))
-            .ToArray();
+            .Select(character => ComputeCharacterPositionsForLine(character, lineSize))
+            .Select(characterPositions => CreateLineWithCharacter(characterPositions, lineSize));
 
         return Stringify(diamondLines);
     }
     
-    private IEnumerable<char> GetTopToBottomCharacters(char inputCharacter)
+    private IEnumerable<char> GetTopToBottomCharactersFor(char inputCharacter)
     {
         var topHalfCharacters = CharacterRange(_startOfTheAlphabetCharacter, inputCharacter);
         var bottomHalfCharacters = CharacterRange(_startOfTheAlphabetCharacter, inputCharacter).Reverse().Skip(1);
@@ -37,15 +36,15 @@ public class Diamond
         return topHalfCharacters.Concat(bottomHalfCharacters);
     }
 
-    private CharacterPositionsOnLine ComputeCharacterPositionsOnLine(char character, int lineSize)
+    private CharacterLinePositions ComputeCharacterPositionsForLine(char character, int lineSize)
     {
         var lineMiddle = lineSize / 2;
         var offsetFromMiddle = _startOfTheAlphabetCharacter - character;
 
-        return new CharacterPositionsOnLine(character, lineMiddle - offsetFromMiddle, lineMiddle + offsetFromMiddle);
+        return new CharacterLinePositions(character, lineMiddle - offsetFromMiddle, lineMiddle + offsetFromMiddle);
     }
 
-    private char[] CreateLineWithCharacter(CharacterPositionsOnLine characterPositions, int lineSize)
+    private static char[] CreateLineWithCharacter(CharacterLinePositions characterPositions, int lineSize)
     {
         var line = CreateEmptyLine(lineSize);
         line[characterPositions.FirstIndex] = characterPositions.Character;
