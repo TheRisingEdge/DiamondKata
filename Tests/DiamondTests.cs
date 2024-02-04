@@ -13,4 +13,13 @@ public class DiamondTests
     {
         Assert.ThrowsAny<Exception>(() => new Diamond(inputCharacter));
     }
+
+    [Theory]
+    [InlineData('A', "A\n")]
+    public void GivenCharacterThenBuildsExpectedDiamond(char inputCharacter, string expectedDiamond)
+    {
+        var diamond = new Diamond(inputCharacter);
+        
+        Assert.Equal(expectedDiamond, diamond.ToString());
+    }
 }
