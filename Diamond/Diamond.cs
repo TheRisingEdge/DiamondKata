@@ -22,7 +22,7 @@ public class Diamond
         var lineSize = topToBottomCharacters.Length;
 
         var diamondLines = topToBottomCharacters
-            .Select(character => ComputeCharacterPositionsForLine(character, lineSize))
+            .Select(character => ComputeCharacterPositionsOnLineOfSize(character, lineSize))
             .Select(characterPositions => CreateLineWithCharacter(characterPositions, lineSize));
 
         return Stringify(diamondLines);
@@ -36,7 +36,7 @@ public class Diamond
         return topHalfCharacters.Concat(bottomHalfCharacters);
     }
 
-    private CharacterLinePositions ComputeCharacterPositionsForLine(char character, int lineSize)
+    private CharacterLinePositions ComputeCharacterPositionsOnLineOfSize(char character, int lineSize)
     {
         var lineMiddle = lineSize / 2;
         var offsetFromMiddle = _startOfTheAlphabetCharacter - character;
