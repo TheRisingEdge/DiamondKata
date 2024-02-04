@@ -16,7 +16,17 @@ public class DiamondTests
 
     [Theory]
     [InlineData('A', "A\n")]
-    public void GivenCharacterThenBuildsExpectedDiamond(char inputCharacter, string expectedDiamond)
+    [InlineData('B', 
+        " A \n" +
+        "B B\n" +
+        " A \n")]
+    [InlineData('C', 
+        "  A  \n" +
+        " B B \n" +
+        "C   C\n" +
+        " B B \n" +
+        "  A  \n")]
+    public void PrintsExpectedDiamondForInputCharacter(char inputCharacter, string expectedDiamond)
     {
         var diamond = new Diamond(inputCharacter);
         
