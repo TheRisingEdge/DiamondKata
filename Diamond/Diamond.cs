@@ -5,16 +5,18 @@ namespace DiamondKata;
 public class Diamond
 {
     private readonly char _inputCharacter;
+    private readonly char _startOfTheAlphabetCharacter;
 
     public Diamond(char inputCharacter)
     {
         _inputCharacter = char.IsAsciiLetter(inputCharacter) ? inputCharacter: throw new ArgumentException("Diamond can only be built for alphabet characters");
+        _startOfTheAlphabetCharacter = char.IsAsciiLetterLower(inputCharacter) ? 'a' : 'A';
     }
 
     public override string ToString()
     {
-        var topHalfCharacters = CharacterRange('A', _inputCharacter);
-        var bottomHalfCharacters = CharacterRange('A', _inputCharacter).Reverse().Skip(1);
+        var topHalfCharacters = CharacterRange(_startOfTheAlphabetCharacter, _inputCharacter);
+        var bottomHalfCharacters = CharacterRange(_startOfTheAlphabetCharacter, _inputCharacter).Reverse().Skip(1);
         var topToBottomCharacters = topHalfCharacters.Concat(bottomHalfCharacters);
 
         var (_, columns, midRowIndex) = MeasureDiamondSizeFor(_inputCharacter);
@@ -27,14 +29,14 @@ public class Diamond
 
     private (int rows, int columns, int midRowIndex) MeasureDiamondSizeFor(char inputCharacter)
     {
-        var columns = (inputCharacter - 'A') * 2 + 1;
+        var columns = (inputCharacter - _startOfTheAlphabetCharacter) * 2 + 1;
         
         return (columns, columns, columns / 2);
     }
 
     private char[] PlaceCharacterOnLine(char character, int lineSize, int lineMidIndex)
     {
-        var characterMidOffset = 'A' - character;
+        var characterMidOffset = _startOfTheAlphabetCharacter - character;
         var firstAppearanceIndex = lineMidIndex + characterMidOffset;
         var secondAppearanceIndex = lineMidIndex - characterMidOffset;
 
